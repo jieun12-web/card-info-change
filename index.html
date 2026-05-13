@@ -138,10 +138,10 @@
     /* 완료 화면 */
     .done {
       display: none;
-      text-align: center;
-      padding: 40px 20px;
+      padding: 32px 16px;
     }
     .done.show { display: block; }
+    .done .top { text-align: center; margin-bottom: 20px; }
     .done .check-icon {
       width: 64px; height: 64px; border-radius: 50%;
       background: #e9f6ee; color: var(--ok);
@@ -149,8 +149,22 @@
       margin-bottom: 16px;
     }
     .done .check-icon svg { width: 32px; height: 32px; }
-    .done h2 { font-size: 18px; margin: 0 0 12px; }
-    .done p { color: #374151; font-size: 15px; margin: 0; white-space: pre-line; }
+    .done h2 { font-size: 18px; margin: 0; }
+    .done-body p { color: #374151; font-size: 14px; line-height: 1.65; margin: 0 0 14px; }
+    .done-body p:last-child { margin-bottom: 0; }
+    .done-step {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .done-image {
+      width: 100%;
+      max-width: 480px;
+      display: block;
+      margin: 16px auto 0;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
 
     .form-area.hide { display: none; }
   </style>
@@ -233,13 +247,20 @@
     </div>
 
     <div class="done" id="done">
-      <div class="check-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="5 12 10 17 19 7"></polyline>
-        </svg>
+      <div class="top">
+        <div class="check-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="5 12 10 17 19 7"></polyline>
+          </svg>
+        </div>
+        <h2>소중한 정보 확인 감사합니다.</h2>
       </div>
-      <h2>접수가 완료되었습니다</h2>
-      <p>접수하신 내용으로 아이샵케어 고객센터에서 안내될 예정으로 시일 양해 부탁드립니다.</p>
+      <div class="done-body">
+        <p>남겨주신 연락처로 1시간 이내 <strong>내죠여왕 카카오톡</strong>으로 결제 링크를 보내드릴 예정입니다.</p>
+        <p class="done-step">•  [내죠여왕] 알림톡 → [청구서 확인하기] → [다음] → 신용카드 선택 후 결제를 진행해 주세요.</p>
+        <p>아래 이미지를 참고하셔서 결제 부탁드리며, 결제 완료 확인 후 서류 제출 가능한 링크 카카오톡으로 전송 도와드리겠습니다.<br>(1-2시간 이내 전송 예정)</p>
+        <img class="done-image" src="payment-guide.png" alt="내죠여왕 카카오톡 결제 안내" onerror="this.style.display='none'" />
+      </div>
     </div>
   </div>
 
