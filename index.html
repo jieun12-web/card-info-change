@@ -147,6 +147,84 @@
     button.submit:active { background: var(--primary-press); }
     button.submit:disabled { background: #9bb3f0; cursor: default; }
 
+    /* 카드사 연락처 버튼 */
+    .contact-btn {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font: inherit;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 14px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .contact-btn:active { background: #f3f4f6; }
+
+    /* 모달 */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: #fff;
+      width: 100%;
+      max-width: 560px;
+      border-radius: 16px 16px 0 0;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: slideUp .2s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @media (min-width: 561px) {
+      .modal-backdrop { align-items: center; padding: 20px; }
+      .modal { border-radius: 16px; max-height: 80vh; animation: none; }
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modal-header h2 { font-size: 17px; margin: 0; }
+    .modal-close {
+      background: none; border: 0;
+      font-size: 24px; line-height: 1; color: var(--muted);
+      padding: 0; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:active { background: #f3f4f6; }
+    .modal-body { padding: 8px 16px 20px; overflow-y: auto; }
+    .contact-list { list-style: none; padding: 0; margin: 0; }
+    .contact-list li {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 4px;
+      border-bottom: 1px solid var(--line);
+    }
+    .contact-list li:last-child { border-bottom: 0; }
+    .contact-list .name { font-size: 15px; font-weight: 600; }
+    .contact-list .tel {
+      font-size: 16px; color: var(--primary);
+      text-decoration: none; font-weight: 700;
+      padding: 6px 10px; border-radius: 6px;
+    }
+    .contact-list .tel:active { background: #f3f7ff; }
+
     /* 완료 화면 */
     .done {
       display: none;
@@ -206,6 +284,8 @@
 토스페이 고객센터 : <a href="tel:16444900">1644-4900</a>
 카카오페이 고객센터 : <a href="tel:16447108">1644-7108</a>
 제로페이 고객센터 : <a href="tel:16700582">1670-0582</a></div>
+
+      <button type="button" class="contact-btn" id="openContacts">📞 카드사 고객센터 연락처 보기</button>
 
       <form id="form" novalidate>
         <div class="card">
@@ -279,6 +359,28 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="contactsModal" aria-hidden="true" role="dialog">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>카드사 고객센터</h2>
+        <button type="button" class="modal-close" id="closeContacts" aria-label="닫기">×</button>
+      </div>
+      <div class="modal-body">
+        <ul class="contact-list">
+          <li><span class="name">비씨카드</span><a class="tel" href="tel:15884500">1588-4500</a></li>
+          <li><span class="name">신한카드</span><a class="tel" href="tel:15447000">1544-7000</a></li>
+          <li><span class="name">삼성카드</span><a class="tel" href="tel:15888700">1588-8700</a></li>
+          <li><span class="name">현대카드</span><a class="tel" href="tel:15776000">1577-6000</a></li>
+          <li><span class="name">국민카드</span><a class="tel" href="tel:15881688">1588-1688</a></li>
+          <li><span class="name">하나카드</span><a class="tel" href="tel:18001111">1800-1111</a></li>
+          <li><span class="name">농협카드</span><a class="tel" href="tel:16447400">1644-7400</a></li>
+          <li><span class="name">롯데카드</span><a class="tel" href="tel:15888100">1588-8100</a></li>
+          <li><span class="name">우리카드</span><a class="tel" href="tel:16449797">1644-9797</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ===== 설정 =====
     // 아래 URL을 Google Apps Script "웹 앱" 배포 URL로 교체해주세요.
@@ -304,6 +406,25 @@
     }
     onlyDigits(bizEl);
     onlyDigits(phoneEl);
+
+    // 카드사 연락처 모달
+    const contactsModal = document.getElementById("contactsModal");
+    function openContacts() {
+      contactsModal.classList.add("show");
+      contactsModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeContacts() {
+      contactsModal.classList.remove("show");
+      contactsModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+    document.getElementById("openContacts").addEventListener("click", openContacts);
+    document.getElementById("closeContacts").addEventListener("click", closeContacts);
+    contactsModal.addEventListener("click", (e) => { if (e.target === contactsModal) closeContacts(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && contactsModal.classList.contains("show")) closeContacts();
+    });
 
     // 기타사항 체크박스 토글
     chkEtc.addEventListener("change", () => {
