@@ -289,17 +289,40 @@
       return Array.from(form.querySelectorAll('input[name="item"]:checked')).map(i => i.value);
     }
 
+    // 같은 숫자 4개 이상 반복(예: 1111) 또는 4개 이상 연속 증감(예: 1234, 4321) 검출
+    function hasBadDigitPattern(s) {
+      if (/(\d)\1{3,}/.test(s)) return true;
+      for (let i = 0; i <= s.length - 4; i++) {
+        const a = s.charCodeAt(i), b = s.charCodeAt(i+1), c = s.charCodeAt(i+2), d = s.charCodeAt(i+3);
+        if (b - a === 1 && c - b === 1 && d - c === 1) return true;
+        if (a - b === 1 && b - c === 1 && c - d === 1) return true;
+      }
+      return false;
+    }
+
     // 검증
     function validate() {
       let ok = true;
 
       // 사업자번호
-      const bizValid = /^\d{10}$/.test(bizEl.value);
+      let bizValid = /^\d{10}$/.test(bizEl.value);
+      let bizMsg = "사업자번호는 숫자 10자리로 입력해주세요.";
+      if (bizValid && hasBadDigitPattern(bizEl.value)) {
+        bizValid = false;
+        bizMsg = "유효하지 않은 사업자번호 같아요. 다시 확인해 주세요.";
+      }
+      document.querySelector("#f-biz .err-msg").textContent = bizMsg;
       setError("f-biz", !bizValid);
       if (!bizValid) ok = false;
 
       // 휴대폰
-      const phoneValid = /^\d{11}$/.test(phoneEl.value);
+      let phoneValid = /^\d{11}$/.test(phoneEl.value);
+      let phoneMsg = "휴대폰 번호는 숫자 11자리로 입력해주세요.";
+      if (phoneValid && hasBadDigitPattern(phoneEl.value)) {
+        phoneValid = false;
+        phoneMsg = "유효하지 않은 휴대폰 번호 같아요. 다시 확인해 주세요.";
+      }
+      document.querySelector("#f-phone .err-msg").textContent = phoneMsg;
       setError("f-phone", !phoneValid);
       if (!phoneValid) ok = false;
 
