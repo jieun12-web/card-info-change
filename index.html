@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>카드사 정보변경 신청</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2b66f6;
+      --primary-press: #1f51cf;
+      --error: #d92d20;
+      --ok: #0f9d58;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Pretendard, "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+    h1 {
+      font-size: 20px;
+      margin: 4px 0 16px;
+      letter-spacing: -0.01em;
+    }
+    .notice {
+      background: #fffaf0;
+      border: 1px solid #ffe2a8;
+      color: #4a3a10;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 14px;
+      margin-bottom: 18px;
+      white-space: pre-line;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .req { color: var(--error); margin-left: 2px; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    input[type="text"], input[type="tel"], textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 16px; /* iOS 줌 방지 */
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(43,102,246,0.15);
+    }
+    textarea { min-height: 96px; resize: vertical; }
+    .err-msg {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 6px;
+      display: none;
+    }
+    .field.has-error input,
+    .field.has-error textarea { border-color: var(--error); }
+    .field.has-error .err-msg { display: block; }
+
+    .checks { display: flex; flex-direction: column; gap: 8px; }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      min-height: 48px;
+    }
+    .check input { width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; }
+    .check:has(input:checked) {
+      border-color: var(--primary);
+      background: #f3f7ff;
+    }
+    .etc-wrap {
+      display: none;
+      margin-top: 10px;
+    }
+    .etc-wrap.show { display: block; }
+
+    button.submit {
+      width: 100%;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--primary);
+      border: 0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 8px;
+      cursor: pointer;
+      min-height: 52px;
+    }
+    button.submit:active { background: var(--primary-press); }
+    button.submit:disabled { background: #9bb3f0; cursor: default; }
+
+    /* 완료 화면 */
+    .done {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .done.show { display: block; }
+    .done .check-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: #e9f6ee; color: var(--ok);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .done .check-icon svg { width: 32px; height: 32px; }
+    .done h2 { font-size: 18px; margin: 0 0 12px; }
+    .done p { color: #374151; font-size: 15px; margin: 0; white-space: pre-line; }
+
+    .form-area.hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>카드사 정보변경 신청</h1>
+
+    <div class="form-area" id="formArea">
+      <!-- 안내 메시지 영역: 텍스트만 받으면 여기에 채울게 -->
+      <div class="notice" id="notice">[안내 메시지가 여기에 들어갑니다]</div>
+
+      <form id="form" novalidate>
+        <div class="card">
+          <div class="field" id="f-biz">
+            <label class="label" for="biz">사업자번호<span class="req">*</span></label>
+            <input
+              id="biz"
+              name="biz"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="off"
+              maxlength="10"
+              placeholder="숫자 10자리"
+            />
+            <div class="err-msg">사업자번호는 숫자 10자리로 입력해주세요.</div>
+          </div>
+
+          <div class="field" id="f-phone">
+            <label class="label" for="phone">카카오톡 수신 가능 휴대폰 번호<span class="req">*</span></label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="off"
+              maxlength="11"
+              placeholder="01012345678"
+            />
+            <div class="hint">- 없이 숫자 11자리만 입력</div>
+            <div class="err-msg">휴대폰 번호는 숫자 11자리로 입력해주세요.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="field" id="f-items">
+            <label class="label">변경 원하는 항목<span class="req">*</span></label>
+            <div class="checks">
+              <label class="check"><input type="checkbox" name="item" value="상호명" />상호명</label>
+              <label class="check"><input type="checkbox" name="item" value="대표자(변경 또는 추가)" />대표자 (변경 또는 추가)</label>
+              <label class="check"><input type="checkbox" name="item" value="정산 계좌" />정산 계좌</label>
+              <label class="check"><input type="checkbox" name="item" value="매장 주소" />매장 주소</label>
+              <label class="check"><input type="checkbox" name="item" value="기타사항" id="chk-etc" />기타사항</label>
+            </div>
+            <div class="etc-wrap" id="etcWrap">
+              <textarea id="etc" name="etc" placeholder="기타사항 내용을 입력해주세요."></textarea>
+              <div class="err-msg" id="etc-err">기타사항 내용을 입력해주세요.</div>
+            </div>
+            <div class="err-msg" id="items-err">변경 원하는 항목을 1개 이상 선택해주세요.</div>
+          </div>
+        </div>
+
+        <button class="submit" type="submit" id="submitBtn">제출하기</button>
+      </form>
+    </div>
+
+    <div class="done" id="done">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="5 12 10 17 19 7"></polyline>
+        </svg>
+      </div>
+      <h2>접수가 완료되었습니다</h2>
+      <p>접수하신 내용으로 아이샵케어 고객센터에서 안내될 예정으로 시일 양해 부탁드립니다.</p>
+    </div>
+  </div>
+
+  <script>
+    // ===== 설정 =====
+    // 아래 URL을 Google Apps Script "웹 앱" 배포 URL로 교체해주세요.
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwk9H_1RrdxK8SLQ7OCCy6MllCkHRPSWNOVj7jTAqAdipkUkuYCxzkisVDig0HzZPVI/exec";
+
+    // ===== 요소 =====
+    const form     = document.getElementById("form");
+    const bizEl    = document.getElementById("biz");
+    const phoneEl  = document.getElementById("phone");
+    const etcEl    = document.getElementById("etc");
+    const etcWrap  = document.getElementById("etcWrap");
+    const chkEtc   = document.getElementById("chk-etc");
+    const submitBtn= document.getElementById("submitBtn");
+    const formArea = document.getElementById("formArea");
+    const doneEl   = document.getElementById("done");
+
+    // 숫자만 허용
+    function onlyDigits(el) {
+      el.addEventListener("input", () => {
+        const cleaned = el.value.replace(/\D/g, "");
+        if (cleaned !== el.value) el.value = cleaned;
+      });
+    }
+    onlyDigits(bizEl);
+    onlyDigits(phoneEl);
+
+    // 기타사항 체크박스 토글
+    chkEtc.addEventListener("change", () => {
+      etcWrap.classList.toggle("show", chkEtc.checked);
+      if (!chkEtc.checked) {
+        etcEl.value = "";
+        clearError("etc-err-wrap");
+      }
+    });
+
+    function setError(fieldId, on) {
+      const f = document.getElementById(fieldId);
+      if (!f) return;
+      f.classList.toggle("has-error", !!on);
+    }
+    function clearError(_) {} // no-op helper
+
+    function getCheckedItems() {
+      return Array.from(form.querySelectorAll('input[name="item"]:checked')).map(i => i.value);
+    }
+
+    // 검증
+    function validate() {
+      let ok = true;
+
+      // 사업자번호
+      const bizValid = /^\d{10}$/.test(bizEl.value);
+      setError("f-biz", !bizValid);
+      if (!bizValid) ok = false;
+
+      // 휴대폰
+      const phoneValid = /^\d{11}$/.test(phoneEl.value);
+      setError("f-phone", !phoneValid);
+      if (!phoneValid) ok = false;
+
+      // 변경 항목 최소 1개
+      const items = getCheckedItems();
+      const itemsValid = items.length > 0;
+      const itemsErr = document.getElementById("items-err");
+      itemsErr.style.display = itemsValid ? "none" : "block";
+      if (!itemsValid) ok = false;
+
+      // 기타사항 체크 시 텍스트 필수
+      const etcErr = document.getElementById("etc-err");
+      if (chkEtc.checked) {
+        const etcValid = etcEl.value.trim().length > 0;
+        etcErr.style.display = etcValid ? "none" : "block";
+        if (!etcValid) ok = false;
+      } else {
+        etcErr.style.display = "none";
+      }
+
+      return ok;
+    }
+
+    // 제출
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!validate()) {
+        const firstErr = form.querySelector(".has-error, .err-msg[style*='block']");
+        if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      const payload = {
+        biz: bizEl.value,
+        phone: phoneEl.value,
+        items: getCheckedItems(),
+        etc: chkEtc.checked ? etcEl.value.trim() : "",
+        submittedAt: new Date().toISOString(),
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "제출 중...";
+
+      try {
+        if (!WEB_APP_URL || WEB_APP_URL === "YOUR_WEB_APP_URL") {
+          throw new Error("WEB_APP_URL이 설정되지 않았습니다.");
+        }
+        // Apps Script는 no-cors로 보내고 응답은 확인 불가 → 실패는 네트워크 오류로만 잡힘
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+        // 완료 화면 전환
+        formArea.classList.add("hide");
+        doneEl.classList.add("show");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        alert("전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.\n" + (err && err.message ? err.message : ""));
+        submitBtn.disabled = false;
+        submitBtn.textContent = "제출하기";
+      }
+    });
+  </script>
+</body>
+</html>
