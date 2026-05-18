@@ -70,7 +70,7 @@ function njyw_expiry(d) {
 }
 
 /**
- * 시트1 G열(처리완료) 체크 시 내죠여왕에 1행 적재. 행당 1회(H열 표식으로 중복 방지).
+ * 원본데이터 G열(처리완료) 체크 시 내죠여왕에 1행 적재. 행당 1회(H열 표식으로 중복 방지).
  * 단순 트리거: 같은 스프레드시트 작업이라 권한 승인 불필요.
  */
 function onEdit(e) {
@@ -78,7 +78,7 @@ function onEdit(e) {
     if (!e || !e.range) return;
     var rng = e.range;
     var sh = rng.getSheet();
-    if (sh.getName() !== '시트1') return;
+    if (sh.getName() !== '원본데이터') return;
     if (rng.getColumn() !== 7) return;                 // G열만
     if (rng.getNumColumns() !== 1 || rng.getNumRows() !== 1) return;
     var row = rng.getRow();
