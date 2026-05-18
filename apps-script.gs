@@ -42,3 +42,29 @@ function doGet() {
     .createTextOutput('카드사 정보변경 신청 엔드포인트 - 정상')
     .setMimeType(ContentService.MimeType.TEXT);
 }
+
+// ===== [내죠여왕] 자동 적재 헬퍼 (v4) =====
+
+/** 사업자번호 문자열에서 숫자만 추출 후 4·5번째 자리(0-index 3,4)가 81~87이면 55000, 그 외 33000 */
+function njyw_calcAmount(bizRaw) {
+  var digits = String(bizRaw == null ? '' : bizRaw).replace(/[^0-9]/g, '');
+  var pair = parseInt(digits.substring(3, 5), 10);
+  return (pair >= 81 && pair <= 87) ? 55000 : 33000;
+}
+
+/** 정수를 4자리 zero-pad 문자열로 (1 → "0001") */
+function njyw_pad4(n) {
+  return ('000' + n).slice(-4);
+}
+
+/** Date → Asia/Seoul 기준 'MMdd' (예 5월18일 → "0518") */
+function njyw_mmdd(d) {
+  return Utilities.formatDate(d, 'Asia/Seoul', 'MMdd');
+}
+
+/** Date → (그 날짜 + 29일)의 Asia/Seoul 'yyyyMMdd' 8자리 문자열 */
+function njyw_expiry(d) {
+  var t = new Date(d.getTime());
+  t.setDate(t.getDate() + 29);
+  return Utilities.formatDate(t, 'Asia/Seoul', 'yyyyMMdd');
+}
