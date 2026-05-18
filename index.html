@@ -401,6 +401,7 @@
     // ===== 요소 =====
     const form     = document.getElementById("form");
     const bizEl    = document.getElementById("biz");
+    const nameEl   = document.getElementById("name");
     const phoneEl  = document.getElementById("phone");
     const etcEl    = document.getElementById("etc");
     const etcWrap  = document.getElementById("etcWrap");
@@ -495,6 +496,11 @@
       setError("f-phone", !phoneValid);
       if (!phoneValid) ok = false;
 
+      // 상호명
+      const nameValid = nameEl.value.trim().length > 0;
+      setError("f-name", !nameValid);
+      if (!nameValid) ok = false;
+
       // 변경 항목 최소 1개
       const items = getCheckedItems();
       const itemsValid = items.length > 0;
@@ -526,6 +532,7 @@
 
       const payload = {
         biz: bizEl.value,
+        name: nameEl.value.trim(),
         phone: phoneEl.value,
         items: getCheckedItems(),
         etc: chkEtc.checked ? etcEl.value.trim() : "",
